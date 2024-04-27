@@ -26,12 +26,12 @@ app.post('/webhook', async (req, res) => {
   // Sends text to the above chatID
   bot.sendMessage(chatId,
     `🔔Bomber Man # ${token_id} transferred🔔\n\n From: ${from}\n\n To: ${to}\n
-    https://polygonscan.com/tx/${tx_hash}`
+    https://etherscan.io/tx/${tx_hash}`
  );
 
 });
 
 // Start Express Server
 app.listen(PORT, () => {
-  console.log(`Express server is listening`);
+  console.log(`Express server is listening on: `, PORT);
 });
