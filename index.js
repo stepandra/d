@@ -3,7 +3,7 @@ const express = require("express");
 const TelegramBot = require("node-telegram-bot-api");
 
 
-const {TOKEN, PORT} = process.env;
+const {TOKEN, PORT, CHAT_ID} = process.env;
 
 const bot = new TelegramBot(TOKEN);
 
@@ -21,7 +21,7 @@ app.post('/webhook', async (req, res) => {
 
   res.sendStatus(200);
 
-  const chatId = `292119849`;
+  const chatId = CHAT_ID;
 
   // Sends text to the above chatID
   bot.sendMessage(chatId,
