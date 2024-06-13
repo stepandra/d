@@ -1,37 +1,37 @@
-require("dotenv").config();
-const express = require("express");
-const TelegramBot = require("node-telegram-bot-api");
-
-
-const {TOKEN, PORT, CHAT_ID} = process.env;
-
-const bot = new TelegramBot(TOKEN);
-
+const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-// We are receiving updates at the route below!
-app.post('/webhook', async (req, res) => {
-  const webhook = req.body;
-  const from = webhook[0].from;
-  const to = webhook[0].to;
-  const token_id = Number.parseInt(webhook[0].logs[0].topics[3],16);
-  const tx_hash = webhook[0].logs[0].transactionHash;
+app.use(bodyParser.json());
 
-  res.sendStatus(200);
+// Endpoint to receive webhook notifications
+app.post('/webhook', (req, res) => {
+  const notification = req.body;
+  
+  // Log the notification payload
+  console.log('Received notification:', notification);
 
-  const chatId = CHAT_ID;
+  // Process the notification
+  if (notification.type === 'validator_status') {
+    handleValidatorStatus(notification);
+  } else {
+    console.log('Unknown notification type:', notification.type);
+  }
 
-  // Sends text to the above chatID
-  bot.sendMessage(chatId,
-    `🔔Bomber Man # ${token_id} transferred🔔\n\n From: ${from}\n\n To: ${to}\n
-    https://etherscan.io/tx/${tx_hash}`
- );
-
+  res.status(200).send('Webhook received');
 });
 
-// Start Express Server
+function handleValidatorStatus(notification) {
+  const { validator_id, status, timestamp } = notification;
+  
+  console.log(`Validator ${validator_id} has status ${status} at ${new Date(timestamp * 1000).toISOString()}`);
+  
+  // Add your custom logic here to handle the validator status change
+}
+
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Express server is listening on: `, PORT);
+  console.log(`Server is running on port ${PORT}`);
 });
